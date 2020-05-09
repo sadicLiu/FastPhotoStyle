@@ -9,21 +9,22 @@ from photo_wct import PhotoWCT
 
 parser = argparse.ArgumentParser(description='Photorealistic Image Stylization')
 parser.add_argument('--model', default='./PhotoWCTModels/photo_wct.pth')
-parser.add_argument('--content_image_path', default='./images/content1.png')
+parser.add_argument('--content_image_path', default='./images/content2.jpg')
 parser.add_argument('--content_seg_path', default=[])
-parser.add_argument('--style_image_path', default='./images/style1.png')
+parser.add_argument('--style_image_path', default='./images/style3.jpg')
 parser.add_argument('--style_seg_path', default=[])
-parser.add_argument('--output_image_path', default='./results/example1.png')
+parser.add_argument('--output_image_path', default='./results/')
 parser.add_argument('--save_intermediate', action='store_true', default=True)
 parser.add_argument('--fast', action='store_true', default=False)
 parser.add_argument('--no_post', action='store_true', default=True)
 parser.add_argument('--cuda', type=int, default=0, help='Enable CUDA.')
 args = parser.parse_args()
 
-# Load model
+# stylization module
 p_wct = PhotoWCT()
 p_wct.load_state_dict(torch.load(args.model))
 
+# smoothing module
 if args.fast:
     from photo_gif import GIFSmoothing
 
@@ -32,8 +33,6 @@ else:
     from photo_smooth import Propagator
 
     p_pro = Propagator()
-if args.cuda:
-    p_wct.cuda(0)
 
 process_stylization.stylization(
     stylization_module=p_wct,

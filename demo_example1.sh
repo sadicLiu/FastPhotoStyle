@@ -1,6 +1,6 @@
-mkdir images -p && mkdir results -p;
-rm images/content1.png -rf;
-rm images/style1.png -rf;
+#mkdir images -p && mkdir results -p;
+#rm images/content1.png -rf;
+#rm images/style1.png -rf;
 rm results/demo_result_example1.png
 cd images;
 axel -n 1 http://freebigpictures.com/wp-content/uploads/shady-forest.jpg --output=content1.png;

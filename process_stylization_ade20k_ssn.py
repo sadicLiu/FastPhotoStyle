@@ -1,33 +1,30 @@
-"""
-Copyright (C) 2018 NVIDIA Corporation.  All rights reserved.
-Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
-"""
-
 from __future__ import print_function
-import torch
+
 import numpy as np
-from PIL import Image
-from torch.autograd import Variable
+import torch
+import torch.nn as nn
 import torchvision.transforms as transforms
 import torchvision.utils as utils
-import torch.nn as nn
-from smooth_filter import smooth_filter
-from process_stylization import Timer, memory_limit_image_resize
+from PIL import Image
 from scipy.io import loadmat
+
+from process_stylization import Timer, memory_limit_image_resize
+from smooth_filter import smooth_filter
+
 colors = loadmat('segmentation/data/color150.mat')['colors']
 
 
 def overlay(img, pred_color, blend_factor=0.4):
     import cv2
     edges = cv2.Canny(pred_color, 20, 40)
-    edges = cv2.dilate(edges, np.ones((5,5),np.uint8), iterations=1)
-    out = (1-blend_factor)*img + blend_factor * pred_color
-    edge_pixels = (edges==255)
-    new_color = [0,0,255]
-    for i in range(0,3):
-        timg = out[:,:,i]
-        timg[edge_pixels]=new_color[i]
-        out[:,:,i] = timg
+    edges = cv2.dilate(edges, np.ones((5, 5), np.uint8), iterations=1)
+    out = (1 - blend_factor) * img + blend_factor * pred_color
+    edge_pixels = (edges == 255)
+    new_color = [0, 0, 255]
+    for i in range(0, 3):
+        timg = out[:, :, i]
+        timg[edge_pixels] = new_color[i]
+        out[:, :, i] = timg
     return out
 
 
@@ -36,7 +33,7 @@ def visualize_result(label_map):
     label_map_rgb = np.zeros((label_map.shape[0], label_map.shape[1], 3), dtype=np.uint8)
     for label in np.unique(label_map):
         label_map_rgb += (label_map == label)[:, :, np.newaxis] * \
-            np.tile(colors[label],(label_map.shape[0], label_map.shape[1], 1))
+                         np.tile(colors[label], (label_map.shape[0], label_map.shape[1], 1))
     return label_map_rgb
 
 
@@ -69,7 +66,7 @@ class SegReMapping:
                     new_cont_label_info[cont_label_index] = new_label
                     break
         new_cont_seg = cont_seg.copy()
-        for i,current_label in enumerate(cont_label_info):
+        for i, current_label in enumerate(cont_label_info):
             new_cont_seg[(cont_seg == current_label)] = new_cont_label_info[i]
 
         cont_label_info = []
@@ -85,7 +82,7 @@ class SegReMapping:
                     new_style_label_info[style_label_index] = new_label
                     break
         new_styl_seg = styl_seg.copy()
-        for i,current_label in enumerate(style_label_info):
+        for i, current_label in enumerate(style_label_info):
             # print("%d -> %d" %(current_label,new_style_label_info[i]))
             new_styl_seg[(styl_seg == current_label)] = new_style_label_info[i]
 
@@ -95,28 +92,28 @@ class SegReMapping:
         init_ratio = self.min_ratio
         # Assign label with small portions to label with large portion
         new_seg = seg.copy()
-        [h,w] = new_seg.shape
-        n_pixels = h*w
+        [h, w] = new_seg.shape
+        n_pixels = h * w
         # First scan through what are the available labels and their sizes
         label_info = []
         ratio_info = []
         new_label_info = []
         for label in np.unique(seg):
-            ratio = np.sum(np.float32((seg == label))[:])/n_pixels
+            ratio = np.sum(np.float32((seg == label))[:]) / n_pixels
             label_info.append(label)
             new_label_info.append(label)
             ratio_info.append(ratio)
-        for i,current_label in enumerate(label_info):
+        for i, current_label in enumerate(label_info):
             if ratio_info[i] < init_ratio:
                 for j in range(self.label_mapping.shape[0]):
-                    new_label = self.label_mapping[j,current_label]
+                    new_label = self.label_mapping[j, current_label]
                     if new_label in label_info:
                         index = label_info.index(new_label)
                         if index >= 0:
                             if ratio_info[index] >= init_ratio:
                                 new_label_info[i] = new_label
                                 break
-        for i,current_label in enumerate(label_info):
+        for i, current_label in enumerate(label_info):
             new_seg[(seg == current_label)] = new_label_info[i]
         return new_seg
 
@@ -210,4 +207,3 @@ def stylization(stylization_module, smoothing_module, content_image_path, style_
                     out_img = smooth_filter(out_img, cont_pilimg, f_radius=15, f_edge=1e-1)
             out_img.save(output_image_path)
     return
-

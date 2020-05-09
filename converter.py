@@ -28,7 +28,7 @@ def photo_wct_loader(p_wct):
 if __name__ == '__main__':
     if not os.path.exists('pth_models'):
         os.mkdir('pth_models')
-    
+
     ## VGGEncoder1
     vgg1 = load_lua('models/vgg_normalised_conv1_1_mask.t7')
     e1 = VGGEncoder(1)
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         'conv1_1': 2,
     })
     torch.save(e1.state_dict(), 'pth_models/vgg_normalised_conv1.pth')
-    
+
     ## VGGDecoder1
     inv1 = load_lua('models/feature_invertor_conv1_1_mask.t7')
     d1 = VGGDecoder(1)
@@ -45,7 +45,7 @@ if __name__ == '__main__':
         'conv1_1': 1,
     })
     torch.save(d1.state_dict(), 'pth_models/feature_invertor_conv1.pth')
-    
+
     ## VGGEncoder2
     vgg2 = load_lua('models/vgg_normalised_conv2_1_mask.t7')
     e2 = VGGEncoder(2)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         'conv2_1': 9,
     })
     torch.save(e2.state_dict(), 'pth_models/vgg_normalised_conv2.pth')
-    
+
     ## VGGDecoder2
     inv2 = load_lua('models/feature_invertor_conv2_1_mask.t7')
     d2 = VGGDecoder(2)
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         'conv1_1': 8,
     })
     torch.save(d2.state_dict(), 'pth_models/feature_invertor_conv2.pth')
-    
+
     ## VGGEncoder3
     vgg3 = load_lua('models/vgg_normalised_conv3_1_mask.t7')
     e3 = VGGEncoder(3)
@@ -79,7 +79,7 @@ if __name__ == '__main__':
         'conv3_1': 16,
     })
     torch.save(e3.state_dict(), 'pth_models/vgg_normalised_conv3.pth')
-    
+
     ## VGGDecoder3
     inv3 = load_lua('models/feature_invertor_conv3_1_mask.t7')
     d3 = VGGDecoder(3)
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         'conv1_1': 15,
     })
     torch.save(d3.state_dict(), 'pth_models/feature_invertor_conv3.pth')
-    
+
     ## VGGEncoder4
     vgg4 = load_lua('models/vgg_normalised_conv4_1_mask.t7')
     e4 = VGGEncoder(4)
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         'conv4_1': 29,
     })
     torch.save(e4.state_dict(), 'pth_models/vgg_normalised_conv4.pth')
-    
+
     ## VGGDecoder4
     inv4 = load_lua('models/feature_invertor_conv4_1_mask.t7')
     d4 = VGGDecoder(4)
@@ -124,7 +124,7 @@ if __name__ == '__main__':
         'conv1_1': 28,
     })
     torch.save(d4.state_dict(), 'pth_models/feature_invertor_conv4.pth')
-    
+
     p_wct = PhotoWCT()
     photo_wct_loader(p_wct)
     torch.save(p_wct.state_dict(), 'PhotoWCTModels/photo_wct.pth')
