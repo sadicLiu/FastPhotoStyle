@@ -97,6 +97,7 @@ def stylization(stylization_module, smoothing_module, content_image_path, style_
             styl_seg = styl_seg_remapping.process(styl_seg)
 
         if save_intermediate:
+            # stylization
             with Timer("Elapsed time in stylization: %f"):
                 stylized_img = stylization_module.transform(cont_img, styl_img, cont_seg, styl_seg)
             if ch != new_ch or cw != new_cw:
@@ -104,14 +105,15 @@ def stylization(stylization_module, smoothing_module, content_image_path, style_
                 stylized_img = nn.functional.upsample(stylized_img, size=(ch, cw), mode='bilinear')
             utils.save_image(stylized_img.data.cpu().float(), output_image_path + 'style.png', nrow=1, padding=0)
 
+            # smoothing
             with Timer("Elapsed time in propagation: %f"):
                 out_img = smoothing_module.process(output_image_path + 'style.png', content_image_path)
             out_img.save(output_image_path + 'smooth.png')
 
+            # filter
             if not cuda:
                 print("NotImplemented: The CPU version of smooth filter has not been implemented currently.")
                 return
-
             if no_post is False:
                 with Timer("Elapsed time in post processing: %f"):
                     out_img = smooth_filter(output_image_path + 'smooth.png', content_image_path, f_radius=15,

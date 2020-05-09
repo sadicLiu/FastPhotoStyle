@@ -26,7 +26,6 @@ class PhotoWCT(nn.Module):
         cF4, cpool_idx, cpool1, cpool_idx2, cpool2, cpool_idx3, cpool3 = self.e4(cont_img)
         sF4 = sF4.data.squeeze(0)
         cF4 = cF4.data.squeeze(0)
-        # print(cont_seg)
         csF4 = self.__feature_wct(cF4, sF4, cont_seg, styl_seg)
         Im4 = self.d4(csF4, cpool_idx, cpool1, cpool_idx2, cpool2, cpool_idx3, cpool3)
 

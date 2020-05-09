@@ -9,9 +9,9 @@ from photo_wct import PhotoWCT
 
 parser = argparse.ArgumentParser(description='Photorealistic Image Stylization')
 parser.add_argument('--model', default='./PhotoWCTModels/photo_wct.pth')
-parser.add_argument('--content_image_path', default='./images/content2.jpg')
+parser.add_argument('--content_image_path', default='./images/vehicle.jpg')
 parser.add_argument('--content_seg_path', default=[])
-parser.add_argument('--style_image_path', default='./images/style3.jpg')
+parser.add_argument('--style_image_path', default='./images/sand.jpg')
 parser.add_argument('--style_seg_path', default=[])
 parser.add_argument('--output_image_path', default='./results/')
 parser.add_argument('--save_intermediate', action='store_true', default=True)

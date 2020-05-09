@@ -1,3 +1,4 @@
+#coding=utf-8
 import torch.nn as nn
 
 
@@ -69,6 +70,7 @@ class VGGEncoder(nn.Module):
         self.relu4_1 = nn.ReLU(inplace=True)
         # 28 x 28
 
+    # 用于style_image的特征提取
     def forward(self, x):
         out = self.conv0(x)
 
@@ -124,6 +126,7 @@ class VGGEncoder(nn.Module):
 
         return out, pool1_idx, pool1.size(), pool2_idx, pool2.size(), pool3_idx, pool3.size()
 
+    # 用于content_image的特征提取
     def forward_multiple(self, x):
         out = self.conv0(x)
 
