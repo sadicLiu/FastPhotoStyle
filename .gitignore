@@ -10,3 +10,7 @@ notebooks/.ipynb_checkpoints/*
 *.zip
 *.pkl
 *.pyc
+images/
+results*
+img_test
+results/
