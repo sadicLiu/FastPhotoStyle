@@ -1,3 +1,4 @@
+#coding=utf-8
 import numpy as np
 import torch
 import torch.nn as nn
@@ -120,7 +121,7 @@ class PhotoWCT(nn.Module):
         c_mean = c_mean.unsqueeze(1).expand_as(cont_feat)
         cont_feat = cont_feat - c_mean
 
-        iden = torch.eye(cFSize[0])  # .double()
+        iden = torch.eye(cFSize[0])  # .double()  # 单位矩阵
         if self.is_cuda:
             iden = iden.cuda()
 
@@ -150,8 +151,8 @@ class PhotoWCT(nn.Module):
 
         c_d = (c_e[0:k_c]).pow(-0.5)
         step1 = torch.mm(c_v[:, 0:k_c], torch.diag(c_d))
-        step2 = torch.mm(step1, (c_v[:, 0:k_c].t()))
-        whiten_cF = torch.mm(step2, cont_feat)
+        step2 = torch.mm(step1, (c_v[:, 0:k_c].t()))  # Pc
+        whiten_cF = torch.mm(step2, cont_feat)  # Pc*Hc
 
         s_d = (s_e[0:k_s]).pow(0.5)
         targetFeature = torch.mm(torch.mm(torch.mm(s_v[:, 0:k_s], torch.diag(s_d)), (s_v[:, 0:k_s].t())), whiten_cF)

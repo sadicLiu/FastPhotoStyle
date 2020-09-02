@@ -58,6 +58,8 @@ def memory_limit_image_resize(cont_img):
 def stylization(stylization_module, smoothing_module, content_image_path, style_image_path, content_seg_path,
                 style_seg_path, output_image_path,
                 cuda, save_intermediate, no_post, cont_seg_remapping=None, styl_seg_remapping=None):
+    img_name = content_image_path.split('/')[-1]
+
     # Load image
     with torch.no_grad():
         cont_img = Image.open(content_image_path).convert('RGB')
@@ -103,12 +105,13 @@ def stylization(stylization_module, smoothing_module, content_image_path, style_
             if ch != new_ch or cw != new_cw:
                 print("De-resize image: (%d,%d)->(%d,%d)" % (new_cw, new_ch, cw, ch))
                 stylized_img = nn.functional.upsample(stylized_img, size=(ch, cw), mode='bilinear')
-            utils.save_image(stylized_img.data.cpu().float(), output_image_path + 'style.png', nrow=1, padding=0)
+            utils.save_image(stylized_img.data.cpu().float(), output_image_path + img_name + 'style.png', nrow=1,
+                             padding=0)
 
             # smoothing
             with Timer("Elapsed time in propagation: %f"):
-                out_img = smoothing_module.process(output_image_path + 'style.png', content_image_path)
-            out_img.save(output_image_path + 'smooth.png')
+                out_img = smoothing_module.process(output_image_path + img_name + 'style.png', content_image_path)
+            out_img.save(output_image_path + img_name + 'smooth.png')
 
             # filter
             if not cuda:
@@ -116,9 +119,9 @@ def stylization(stylization_module, smoothing_module, content_image_path, style_
                 return
             if no_post is False:
                 with Timer("Elapsed time in post processing: %f"):
-                    out_img = smooth_filter(output_image_path + 'smooth.png', content_image_path, f_radius=15,
-                                            f_edge=1e-1)
-            out_img.save(output_image_path + 'result.png')
+                    out_img = smooth_filter(output_image_path + img_name + 'smooth.png', content_image_path,
+                                            f_radius=15, f_edge=1e-1)
+            out_img.save(output_image_path + img_name + 'result.png')
         else:
             with Timer("Elapsed time in stylization: %f"):
                 stylized_img = stylization_module.transform(cont_img, styl_img, cont_seg, styl_seg)
